@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown</title>
+    <style>
+    body {
+      font-family: Poppins, sans-serif;
+      background: #101010;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      margin: 0;
+      position: relative;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    #timer {
+      font-size: 2.5em;
+      letter-spacing: 2px;
+      margin-top: 10px;
+    }
+
+    /* ✨ Stylish Share Button */
+    #shareBtn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      backdrop-filter: blur(6px);
+      background: rgba(255, 255, 255, 0.1);
+      color: #00e0ff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 8px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 224, 255, 0.2);
+    }
+    #shareBtn:hover {
+      background: rgba(0, 224, 255, 0.3);
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0, 224, 255, 0.6);
+    }
+
+    /* ✅ Copied message */
+    #copiedMsg {
+      position: absolute;
+      top: 55px;
+      right: 25px;
+      background: rgba(0, 224, 255, 0.15);
+      color: #00e0ff;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.8em;
+      display: none;
+      transition: opacity 0.4s ease;
+    }
+  </style>
+</head>
+<body>
+
+<button id="shareBtn" onclick="copyLink()">📋 Share</button>
+<span id="copiedMsg">✅ Link copied!</span>
+
+<h1 id="event"></h1>
+<div id="timer"></div>
+
+<script>
+    // Get event details from URL
+    const params = new URLSearchParams(window.location.search);
+    const eventName = decodeURIComponent(params.get('event') || "Countdown Event");
+    const targetTime = new Date(params.get('time')).getTime();
+    document.getElementById("event").innerText = eventName;
+
+    // Fun time-up messages 🎉
+    const endMessages = [
+      " time-up... 🎉  The moment has arrived! 🎁"
+    ];
+
+    // Countdown logic
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const diff = targetTime - now;
+
+      if (diff <= 0) {
+        clearInterval(interval);
+        const msg = endMessages[Math.floor(Math.random() * endMessages.length)];
+        document.getElementById("timer").innerText = msg;
+        return;
+      }
+
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((diff % (1000 * 60)) / 1000);
+      document.getElementById("timer").innerText = `${d}d ${h}h ${m}m ${s}s`;
+    }, 1000);
+
+    // Copy link function
+    function copyLink() {
+      const link = window.location.href;
+      navigator.clipboard.writeText(link).then(() => {
+        const msg = document.getElementById('copiedMsg');
+        msg.style.display = 'block';
+        msg.style.opacity = '1';
+        setTimeout(() => {
+          msg.style.opacity = '0';
+          setTimeout(() => msg.style.display = 'none', 300);
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>
